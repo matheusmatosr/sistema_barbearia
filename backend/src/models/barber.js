@@ -1,9 +1,12 @@
 module.exports = (sequelize, DataTypes) => {
   const Barber = sequelize.define('Barber', {
-    name: DataTypes.STRING,
+    name: { type: DataTypes.STRING, allowNull: false },
+    email: { type: DataTypes.STRING, unique: true, allowNull: true },
+    password: { type: DataTypes.STRING, allowNull: true },
     age: DataTypes.INTEGER,
     hireDate: DataTypes.DATE,
-    specialties: DataTypes.JSON, // Alterado para JSON
+    photo: { type: DataTypes.TEXT, allowNull: true },
+    specialties: { type: DataTypes.JSON, allowNull: false, defaultValue: [] },
   });
 
   Barber.associate = models => {

@@ -1,79 +1,38 @@
-# Sistema de barbearia
+# Mestre dos Penteados
 
-Sistema de barbearia com login e cadastro, após logado é disponibilizado o sistema que possui as páginas de Agendamento, Meus agendamentos, e Painel Administrador.
+Sistema web de agendamento para barbearia, com áreas separadas para clientes, barbeiros e administração.
 
-Tecnologias usadas para o backend foi NodeJS e para o frontend foi o React, utilizando o banco PgAdmin.
+## Funcionalidades
 
-## Para rodar o projeto, siga o tutorial abaixo.
+### Site e menu de serviços
+- Página inicial com apresentação da barbearia, menu de serviços e equipe.
+- Menu de serviços padrão, com imagem ilustrativa, descrição, preço e duração. Todos os barbeiros realizam todos os serviços.
+- Cartões da equipe com foto de cada barbeiro. Clicar em um serviço ou em um barbeiro abre o agendamento com a escolha já selecionada.
 
-## 🖥️ Instalação
+### Cliente
+- Cadastro e login.
+- Agendamento em etapas: escolha do serviço, do barbeiro, do dia em um calendário e do horário.
+- Apenas horários livres podem ser escolhidos: atendimentos de 30 minutos, das 08h às 18h, sem conflito com a agenda do barbeiro.
+- "Meus horários": lista dos agendamentos com status, opção de **editar** (trocar serviço, barbeiro, dia ou horário) e de cancelar, com até 2 horas de antecedência.
 
-É necessiario possuir o Git instalado em sua máquina e o banco PgAdmin (PostgreSQL).
+### Barbeiro
+- Acesso com e-mail e senha definidos pelo administrador.
+- "Minha agenda": atendimentos do próprio barbeiro, com atualização de status (Agendado, Em atendimento, Concluído, Cancelado).
+- "Meus ganhos": faturamento gerado, comissão recebida e parte da casa, com gráfico mensal, comparação com o mês anterior e resumo por serviço.
 
-Clone este repositório
-```bash
-git clone https://github.com/matheusmatosr/ClickBeard_Matheus_Matos
-```
+### Administrador
+- Gestão da equipe: cadastro, edição e remoção de barbeiros, com envio de foto.
+- Visão geral da agenda e dos clientes, com cancelamento de horários.
+- Painel financeiro: faturamento bruto, repasse aos barbeiros (custo de comissão), lucro da casa, ticket médio e atendimentos concluídos.
+- Gráfico comparando os últimos 12 meses, detalhamento por barbeiro e por serviço e histórico mensal.
+- Divisão configurável de cada atendimento entre barbeiro e casa (padrão: 50% / 50%).
 
-Abra o terminal e rode os seguintes comandos:
+### Segurança
+- Autenticação por token e permissões verificadas na API para cada perfil.
+- Senhas armazenadas com hash; dados sensíveis não são expostos nas respostas.
 
-### Backend
-1. Acesse o repositorio do backend:
+## Tecnologias
 
-```bash
-cd backend
-```
-
-2. Para instalar as dependências:
-```bash
-npm install
-```
-
-3. Crie o arquivo .env na raiz da pasta backend, substitua pelos seus dados do banco PgAdmin em DB_USER e DB_PASSWORD:
-```bash
-PORT=3001
-DB_NAME=barber_shop_db
-DB_USER='seu_usuario'
-DB_PASSWORD='sua_senha'
-DB_HOST=localhost
-DB_DIALECT=postgres
-JWT_SECRET=your_jwt_secret
-```
-
-4. Para criar as migrações do banco, rode no terminal:
-
-```bash
-npx sequelize db:create
-``` 
-
-5. Para executar as migrações do banco, rode no terminal:
-
-```bash
-npx sequelize db:migrate
-``` 
-
-6. Para rodar o backend:
-
-```bash
-npm run start
-```
-
-### Frontend
-1. Acesse o repositorio do frontend:
-
-```bash
-cd frontend
-```
-
-2. Para instalar as dependências:
-```bash
-npm install
-```
-
-3. Para rodar o frontend:
-
-```bash
-npm run start
-```
-
-Acesse o link que aparecerá no terminal para obter acesso ao projeto.
+- **Frontend:** React, React Router, React Bootstrap.
+- **Backend:** Node.js, Express, Sequelize.
+- **Banco de dados:** PostgreSQL (Supabase).

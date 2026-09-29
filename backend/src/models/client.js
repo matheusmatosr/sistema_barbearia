@@ -6,6 +6,11 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
     },
     password: DataTypes.STRING,
+    role: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'client',
+    },
   });
 
   Client.associate = models => {

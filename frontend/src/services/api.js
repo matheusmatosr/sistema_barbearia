@@ -1,51 +1,45 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3001/api';
+const api = axios.create({
+  baseURL: `${process.env.REACT_APP_API_URL || 'http://localhost:3001'}/api`,
+});
 
-export const fetchBarbers = async () => {
-  const response = await axios.get(`${API_URL}/barbers`);
-  return response.data;
-};
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
-export const fetchSpecialties = async () => {
-  const response = await axios.get(`${API_URL}/specialties`);
-  return response.data;
-};
+const data = (request) => request.then(response => response.data);
 
-export const registerClient = async (clientData) => {
-  await axios.post(`${API_URL}/clients/register`, clientData);
-};
+// Barbearias
+export const fetchShops = () => data(api.get('/barbershops'));
+export const fetchShop = (key) => data(api.get(`/barbershops/${key}`));
+export const fetchManagedShops = () => data(api.get('/barbershops/manage'));
+export const createShop = (shopData) => data(api.post('/barbershops', shopData));
+export const updateShop = (id, shopData) => data(api.put(`/barbershops/${id}`, shopData));
+export const deleteShop = (id) => data(api.delete(`/barbershops/${id}`));
+export const createManager = (shopId, managerData) => data(api.post(`/barbershops/${shopId}/managers`, managerData));
+export const deleteManager = (shopId, managerId) => data(api.delete(`/barbershops/${shopId}/managers/${managerId}`));
 
-export const fetchAppointments = async () => {
-  const response = await axios.get(`${API_URL}/appointments`);
-  return response.data;
-};
+// Equipe (painel)
+export const fetchBarbers = (params) => data(api.get('/barbers', { params }));
+export const createBarber = (barberData) => data(api.post('/barbers', barberData));
+export const updateBarber = (id, barberData) => data(api.put(`/barbers/${id}`, barberData));
+export const deleteBarber = (id) => data(api.delete(`/barbers/${id}`));
 
-export const createAppointment = async (appointmentData) => {
-  await axios.post(`${API_URL}/appointments`, appointmentData);
-};
+// Clientes
+export const registerClient = (clientData) => data(api.post('/clients/register', clientData));
+export const fetchClients = (params) => data(api.get('/clients', { params }));
+export const deleteClient = (id) => data(api.delete(`/clients/${id}`));
 
-export const fetchClients = async () => {
-  const response = await axios.get(`${API_URL}/clients`);
-  return response.data;
-};
+// Agendamentos
+export const fetchAppointments = (params) => data(api.get('/appointments', { params }));
+export const fetchAvailability = (params) => data(api.get('/appointments/availability', { params }));
+export const createAppointment = (appointmentData) => data(api.post('/appointments', appointmentData));
+export const updateAppointment = (id, appointmentData) => data(api.put(`/appointments/${id}`, appointmentData));
+export const rescheduleAppointment = (id, appointmentData) => data(api.put(`/appointments/${id}/reschedule`, appointmentData));
+export const deleteAppointment = (id) => data(api.delete(`/appointments/${id}`));
 
-export const createBarber = async (barberData) => {
-  await axios.post(`${API_URL}/barbers`, barberData);
-};
-
-export const updateBarber = async (id, barberData) => {
-  await axios.put(`${API_URL}/barbers/${id}`, barberData);
-};
-
-export const deleteBarber = async (id) => {
-  await axios.delete(`${API_URL}/barbers/${id}`);
-};
-
-export const deleteClient = async (id) => {
-  await axios.delete(`${API_URL}/clients/${id}`);
-};
-
-export const deleteAppointment = async (id) => {
-  await axios.delete(`${API_URL}/appointments/${id}`);
-};
+// Relatórios
+export const fetchFinancialReport = (params) => data(api.get('/reports/financial', { params }));

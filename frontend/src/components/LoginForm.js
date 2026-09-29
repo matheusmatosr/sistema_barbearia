@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { loginClient } from '../services/authService';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useShop } from '../context/ShopContext';
+
+const HOME_BY_ROLE = { admin: '/admin/barbearias', manager: '/admin-dashboard', barber: '/view-appointments' };
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +15,8 @@ const LoginForm = () => {
     password: '',
   });
   const navigate = useNavigate();
+  const location = useLocation();
+  const { lastShop } = useShop();
 
   const validateForm = () => {
     let valid = true;
@@ -40,9 +45,11 @@ const LoginForm = () => {
 
     setMessage('');
     try {
-      await loginClient({ email, password });
+      const user = await loginClient({ email, password });
       setMessage('Login efetuado com sucesso!');
-      navigate('/'); 
+      const from = location.state?.from;
+      const home = HOME_BY_ROLE[user.role] || (lastShop ? `/b/${lastShop.slug}` : '/');
+      navigate(from ? `${from.pathname}${from.search}` : home, { replace: true });
     } catch (error) {
       setMessage('Login falhou. Por favor, verifique seu e-mail ou senha.');
     }
@@ -59,6 +66,8 @@ const LoginForm = () => {
           <Form.Control
             type="email"
             value={email}
+            autoComplete="email"
+            placeholder="voce@email.com"
             onChange={(e) => setEmail(e.target.value)}
             isInvalid={!!errors.email}
           />
@@ -71,6 +80,8 @@ const LoginForm = () => {
           <Form.Control
             type="password"
             value={password}
+            autoComplete="current-password"
+            placeholder="Sua senha"
             onChange={(e) => setPassword(e.target.value)}
             isInvalid={!!errors.password}
           />

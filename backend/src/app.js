@@ -8,32 +8,38 @@ const barberRoutes = require('./routes/barberRoutes');
 const clientRoutes = require('./routes/clientRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const authRoutes = require('./routes/authRoutes');
+const barbershopRoutes = require('./routes/barbershopRoutes');
+const reportRoutes = require('./routes/reportRoutes');
+const setupDatabase = require('./config/setup');
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json({ limit: '8mb' }));
 
 app.use('/api/barbers', barberRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/barbershops', barbershopRoutes);
+app.use('/api/reports', reportRoutes);
 
-// Middleware para capturar todas as requisições e logá-las
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
+app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
-// Middleware para capturar e logar erros
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
+  if (err.type === 'entity.too.large') return res.status(413).json({ error: 'Arquivo muito grande.' });
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
 const PORT = process.env.PORT || 3001;
 
-sequelize.sync().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
+async function start() {
+  if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET não configurado.');
+  await sequelize.authenticate();
+  await setupDatabase();
+  app.listen(PORT);
+}
+
+start().catch((error) => {
+  console.error('Não foi possível iniciar a API:', error.message);
+  process.exit(1);
 });
