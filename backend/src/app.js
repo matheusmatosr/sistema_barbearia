@@ -18,8 +18,6 @@ app.use(cors(allowedOrigins.length ? { origin: allowedOrigins } : undefined));
 // A Vercel limita o corpo da requisição a 4,5 MB.
 app.use(express.json({ limit: '4mb' }));
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
-
 // Conecta e prepara o banco uma vez por instância: no servidor local ao iniciar,
 // na Vercel na primeira requisição de cada função.
 let ready = null;
@@ -31,11 +29,22 @@ const ensureReady = () => {
       await setupDatabase();
     })().catch((error) => {
       ready = null;
+      // Aparece nos logs da Vercel / terminal apenas quando a conexão falha.
+      console.error('Falha ao preparar o banco:', error.message || error.name, error.parent?.code || '');
       throw error;
     });
   }
   return ready;
 };
+
+app.get('/api/health', async (req, res) => {
+  try {
+    await ensureReady();
+    res.json({ status: 'ok', database: 'ok' });
+  } catch (error) {
+    res.status(503).json({ status: 'ok', database: 'indisponível' });
+  }
+});
 
 app.use(async (req, res, next) => {
   try {
@@ -60,8 +69,8 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3001;
 
-// Execução local (npm start / npm run dev). Na Vercel o app é importado e não chama listen.
-if (require.main === module) {
+// Execução local (npm start / npm run dev). Na Vercel o app é apenas exportado.
+if (require.main === module && !process.env.VERCEL) {
   ensureReady()
     .then(() => app.listen(PORT))
     .catch((error) => {

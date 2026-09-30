@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { sequelize, Barbershop, Client } = require('../models');
 const { DEFAULT_SERVICES, DEFAULT_COMMISSION_RATE } = require('./services');
 

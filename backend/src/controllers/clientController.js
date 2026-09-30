@@ -1,5 +1,5 @@
 const { Client, Appointment } = require('../models');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { emailInUse } = require('../services/validation');
 const { scopedShopId } = require('../services/authService');
 

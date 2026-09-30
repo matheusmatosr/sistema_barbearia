@@ -1,5 +1,5 @@
 const { Barber, Barbershop } = require('../models');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { parseImage, emailInUse } = require('../services/validation');
 const { scopedShopId, canManageShop } = require('../services/authService');
 
