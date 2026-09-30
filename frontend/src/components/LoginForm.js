@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { loginClient } from '../services/authService';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 
 const HOME_BY_ROLE = { admin: '/admin/barbearias', manager: '/admin-dashboard', barber: '/view-appointments' };
@@ -91,6 +91,9 @@ const LoginForm = () => {
         </Form.Group>
         <Button variant="primary" type="submit">Login</Button>
       </Form>
+      <div className="auth-divider"><span>Ainda não tem conta?</span></div>
+      {/* Repassa o destino para o cadastro devolver o cliente ao agendamento. */}
+      <Link to="/register" state={location.state} className="btn btn-outline-primary auth-register">Criar minha conta</Link>
     </div>
   );
 };

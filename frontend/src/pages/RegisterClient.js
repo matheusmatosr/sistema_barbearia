@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { registerClient } from '../services/api';
 import { loginClient } from '../services/authService';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 
 const RegisterClient = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { lastShop } = useShop();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -56,7 +57,8 @@ const RegisterClient = () => {
       await registerClient({ name, email, password });
       await loginClient({ email, password });
       setMessage('Cadastrado com sucesso!');
-      navigate(lastShop ? `/b/${lastShop.slug}` : '/');
+      const from = location.state?.from;
+      navigate(from ? `${from.pathname}${from.search}` : (lastShop ? `/b/${lastShop.slug}` : '/'), { replace: true });
     } catch (error) {
       setMessage(`Erro: ${error.response?.data?.error || 'Não foi possível criar a conta.'}`);
     }
@@ -110,7 +112,7 @@ const RegisterClient = () => {
         </Form.Group>
         <Button variant="primary" type="submit">Criar minha conta <span aria-hidden="true">↗</span></Button>
       </Form>
-      <p className="auth-switch">Já tem conta? <Link to="/login">Entrar</Link></p>
+      <p className="auth-switch">Já tem conta? <Link to="/login" state={location.state}>Entrar</Link></p>
     </section></div>
   );
 };

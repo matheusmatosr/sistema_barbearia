@@ -101,6 +101,10 @@ a { color: inherit; }
 .auth-panel h2 { font: 500 34px var(--display); margin: 8px 0 27px; }
 .auth-panel .container { padding: 0; }
 .auth-panel form > .btn { margin-top: 6px; width: 100%; }
+.auth-divider { align-items: center; color: var(--muted); display: flex; font-size: 12px; gap: 12px; margin: 22px 0 14px; }
+.auth-divider::before, .auth-divider::after { background: var(--line); content: ''; flex: 1; height: 1px; }
+.auth-register { border-color: var(--forest); color: var(--forest); font-weight: 700; width: 100%; }
+.auth-register:hover, .auth-register:focus { background: var(--forest); border-color: var(--forest); color: var(--white); }
 .auth-switch { color: var(--muted); font-size: 13px; margin: 20px 0 0; text-align: center; }
 .auth-switch a { color: var(--forest); font-weight: 700; }
 
