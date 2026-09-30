@@ -5,6 +5,8 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT || 5432),
   dialect: 'postgres',
+  // Import explícito para o bundler da Vercel incluir o driver (o Sequelize o carrega dinamicamente).
+  dialectModule: require('pg'),
   logging: false,
   dialectOptions: process.env.DB_SSL === 'true' ? {
     ssl: { require: true, rejectUnauthorized: false },
