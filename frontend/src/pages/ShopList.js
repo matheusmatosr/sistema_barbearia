@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Spinner } from 'react-bootstrap';
+import { Button, Container, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { fetchShops } from '../services/api';
 import { PLATFORM, shopLogo } from '../context/ShopContext';
@@ -18,10 +18,13 @@ const ShopList = () => {
           <span className="eyebrow">{PLATFORM.name.toUpperCase()} · {PLATFORM.tagline.toUpperCase()}</span>
           <h1>Escolha sua<br />barbearia.</h1>
           <p>Encontre a unidade mais perto de você, conheça os profissionais e reserve seu horário em poucos cliques.</p>
+          {shops?.length === 1
+            ? <Button as={Link} to={`/b/${shops[0].slug}/agendar`} className="hero-cta">Agendar meu horário <span aria-hidden="true">↗</span></Button>
+            : <Button href="#unidades" className="hero-cta" onClick={(event) => { event.preventDefault(); document.getElementById('unidades')?.scrollIntoView({ behavior: 'smooth' }); }}>Agendar meu horário <span aria-hidden="true">↓</span></Button>}
         </Container>
       </section>
       <Container>
-        <section className="home-section">
+        <section className="home-section" id="unidades">
           <div className="section-heading"><div><span className="eyebrow">NOSSAS UNIDADES</span><h2>Barbearias</h2></div>{shops && <span className="section-count">{String(shops.length).padStart(2, '0')} unidades</span>}</div>
           {!shops ? (
             <div className="page-loading"><Spinner animation="border" size="sm" /> Carregando…</div>

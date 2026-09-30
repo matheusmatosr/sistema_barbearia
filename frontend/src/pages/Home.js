@@ -24,7 +24,7 @@ const Home = () => {
       <section className="hero-band"><Container className="hero-content">
         <div className="hero-copy"><span className="eyebrow">{shop.name.toUpperCase()}{shop.tagline ? ` · ${shop.tagline.toUpperCase()}` : ''}</span><h1>Seu próximo<br />grande corte.</h1><p>Barbearia de verdade, atendimento com hora marcada e profissionais que entendem do assunto.</p>{canBook && <Button as={Link} to={bookingLink()} className="hero-cta">Reservar meu horário <span aria-hidden="true">↗</span></Button>}<div className="hero-note"><span className="hero-dot" /> Agenda aberta para novos clientes</div></div>
         <div className="hero-art" role="img" aria-label="Interior contemporâneo de uma barbearia"><div className="hero-art-label"><span>01 / 03</span><strong>O ritual começa aqui.</strong></div></div>
-        <div className="hero-stamp" aria-hidden="true"><span>ESTILO</span><strong>COM<br />ATITUDE</strong><i>✳</i></div>
+        <div className="hero-stamp" aria-hidden="true"><span>ESTILO</span><strong>COM<br />ATITUDE</strong><i>✳&#xFE0E;</i></div>
       </Container></section>
 
       <Container>

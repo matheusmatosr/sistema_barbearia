@@ -65,7 +65,7 @@ const RegisterClient = () => {
   const alertVariant = typeof message === 'string' && message.startsWith('Erro') ? 'danger' : 'success';
 
   return (
-    <div className="container auth-page"><div className="auth-aside"><span className="eyebrow">BOM CORTE MUDA TUDO</span><h1>O próximo<br />capítulo começa<br />na cadeira.</h1><p>Crie sua conta e escolha quando quer renovar o visual.</p><span className="auth-decoration" aria-hidden="true">✳</span></div><section className="auth-panel">
+    <div className="container auth-page"><div className="auth-aside"><span className="eyebrow">BOM CORTE MUDA TUDO</span><h1>O próximo<br />capítulo começa<br />na cadeira.</h1><p>Crie sua conta e escolha quando quer renovar o visual.</p><span className="auth-decoration" aria-hidden="true">✳&#xFE0E;</span></div><section className="auth-panel">
       <span className="eyebrow">NOVO POR AQUI?</span><h2>Criar conta</h2>
       <Form onSubmit={handleSubmit}>
         {message && <Alert variant={alertVariant}>{message}</Alert>}

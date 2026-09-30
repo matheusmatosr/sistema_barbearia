@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { sequelize, Barbershop, Client } = require('../models');
 const { DEFAULT_SERVICES, DEFAULT_COMMISSION_RATE } = require('./services');
+const seedDemoData = require('./demoData');
 
 const DEFAULT_SHOP = { name: 'Mestre dos Penteados', slug: 'mestre-dos-penteados', tagline: 'Barbearia · Est. 2018' };
 
@@ -50,4 +51,6 @@ module.exports = async function setupDatabase() {
     }
     if (Object.keys(updates).length) await admin.update(updates);
   }
+
+  await seedDemoData();
 };

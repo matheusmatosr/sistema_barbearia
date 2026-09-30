@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import ShopList from './pages/ShopList';
 import Home from './pages/Home';
@@ -25,11 +25,24 @@ const ProtectedRoute = ({ children, roles }) => {
   return children;
 };
 
+// Toda troca de página começa no topo (no mobile o navegador mantinha a rolagem anterior).
+const ScrollToTop = () => {
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+  }, []);
+  useLayoutEffect(() => {
+    if (!hash) window.scrollTo(0, 0);
+  }, [pathname, hash]);
+  return null;
+};
+
 const protect = (roles, element) => <ProtectedRoute roles={roles}>{element}</ProtectedRoute>;
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <ShopProvider>
         <div className="app-container">
           <Navbar />

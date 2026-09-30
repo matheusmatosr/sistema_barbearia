@@ -27,10 +27,10 @@ const ServiceCard = ({ service, duration, selected, onSelect, to }) => {
           {onSelect && <span className="service-check">{selected ? '✓ Selecionado' : 'Selecionar'}</span>}
         </div>
         {to && (
-          <Link to={to} className="service-cta">
+          <span className="service-cta">
             Agendar este serviço
             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          </Link>
+          </span>
         )}
       </div>
     </>
@@ -43,6 +43,7 @@ const ServiceCard = ({ service, duration, selected, onSelect, to }) => {
       </button>
     );
   }
+  if (to) return <Link to={to} className="service-card is-link">{content}</Link>;
   return <article className="service-card">{content}</article>;
 };
 
