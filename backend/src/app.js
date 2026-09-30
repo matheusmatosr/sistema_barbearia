@@ -13,7 +13,7 @@ const setupDatabase = require('./config/setup');
 
 const app = express();
 // Em produção, CORS_ORIGIN restringe as chamadas ao domínio do frontend (vírgula separa vários).
-const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(origin => origin.trim()).filter(Boolean);
+const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(origin => origin.trim().replace(/\/+$/, '')).filter(Boolean);
 app.use(cors(allowedOrigins.length ? { origin: allowedOrigins } : undefined));
 // A Vercel limita o corpo da requisição a 4,5 MB.
 app.use(express.json({ limit: '4mb' }));

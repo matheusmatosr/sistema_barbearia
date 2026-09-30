@@ -42,6 +42,12 @@ module.exports = async function setupDatabase() {
         role: 'admin',
       },
     });
-    if (admin.role !== 'admin' || admin.barbershopId) await admin.update({ role: 'admin', barbershopId: null });
+    // O .env é a fonte da verdade do supremo: trocar ADMIN_PASSWORD e reiniciar redefine a senha.
+    const updates = {};
+    if (admin.role !== 'admin' || admin.barbershopId) Object.assign(updates, { role: 'admin', barbershopId: null });
+    if (!(await bcrypt.compare(process.env.ADMIN_PASSWORD, admin.password || ''))) {
+      updates.password = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+    }
+    if (Object.keys(updates).length) await admin.update(updates);
   }
 };
