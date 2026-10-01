@@ -6,6 +6,7 @@ import { getCurrentUser } from '../services/authService';
 import BarberModal from '../components/BarberModal';
 import BarberAvatar from '../components/BarberAvatar';
 import ShopSelect from '../components/ShopSelect';
+import TablePager, { usePagination } from '../components/TablePager';
 
 const AdminDashboard = () => {
   const isAdmin = getCurrentUser()?.role === 'admin';
@@ -19,6 +20,14 @@ const AdminDashboard = () => {
   const [selectedBarber, setSelectedBarber] = useState(null);
   const [error, setError] = useState('');
   const shop = shops.find(item => item.id === shopId);
+  const barberPages = usePagination(barbers, 10);
+  const appointmentPages = usePagination(appointments, 15);
+  const clientPages = usePagination(clients, 15);
+  // Outra barbearia começa sempre na primeira página de cada tabela.
+  const changeShop = (id) => {
+    setShopId(id);
+    [barberPages, appointmentPages, clientPages].forEach(pages => pages.setPage(0));
+  };
 
   useEffect(() => {
     fetchManagedShops()
@@ -80,7 +89,7 @@ const AdminDashboard = () => {
     <main className="container admin-page">
       <header className="page-heading admin-heading panel-heading">
         <div><span className="eyebrow">CENTRAL DE OPERAÇÕES</span><h1>Gestão da barbearia</h1><p>{shop ? <>Equipe, clientes e agenda de <strong>{shop.name}</strong>.</> : 'Equipe, clientes e agenda em uma visão só.'}</p></div>
-        {isAdmin && <ShopSelect shops={shops} value={shopId} onChange={setShopId} />}
+        {isAdmin && <ShopSelect shops={shops} value={shopId} onChange={changeShop} />}
       </header>
       {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
       {!shops.length && !error && <div className="empty-state"><h2>Nenhuma barbearia</h2><p>{isAdmin ? <>Cadastre a primeira em <Link to="/admin/barbearias">Barbearias</Link>.</> : 'Sua conta ainda não está vinculada a uma barbearia.'}</p></div>}
@@ -89,11 +98,11 @@ const AdminDashboard = () => {
           <section className="admin-metrics" aria-label="Resumo"><div><span>Profissionais</span><strong>{barbers.length.toString().padStart(2, '0')}</strong></div><div><span>Clientes</span><strong>{clients.length.toString().padStart(2, '0')}</strong></div><div><span>Horários marcados</span><strong>{appointments.filter(item => item.status === 'Agendado').length.toString().padStart(2, '0')}</strong></div></section>
           <BarberModal show={show} handleClose={() => setShow(false)} editMode={editMode} selectedBarber={selectedBarber} barbers={barbers} setBarbers={setBarbers} barbershopId={shopId} />
 
-          <section className="admin-section"><div className="section-heading"><div><span className="eyebrow">TIME</span><h2>Barbeiros</h2></div><Button onClick={() => handleShow()}>Adicionar barbeiro <span aria-hidden="true">+</span></Button></div><div className="table-wrap"><Table responsive hover className="data-table"><thead><tr><th>Profissional</th><th>Acesso</th><th>Admissão</th><th>Ações</th></tr></thead><tbody>{barbers.map(barber => <tr key={barber.id}><td><div className="table-person"><BarberAvatar barber={barber} size={40} /><div><strong>{barber.name}</strong><small>{barber.age ? `${barber.age} anos` : 'Profissional'}</small></div></div></td><td>{barber.email || '—'}</td><td>{barber.hireDate ? new Date(barber.hireDate).toLocaleDateString('pt-BR') : '—'}</td><td className="table-actions"><Button size="sm" variant="outline-dark" onClick={() => handleShow(barber)}>Editar</Button><Button size="sm" variant="outline-danger" onClick={() => handleDeleteBarber(barber)}>Remover</Button></td></tr>)}</tbody></Table>{!barbers.length && <p className="table-empty">Cadastre o primeiro profissional da equipe.</p>}</div></section>
+          <section className="admin-section"><div className="section-heading"><div><span className="eyebrow">TIME</span><h2>Barbeiros</h2></div><Button onClick={() => handleShow()}>Adicionar barbeiro <span aria-hidden="true">+</span></Button></div><div className="table-wrap"><Table responsive hover className="data-table"><thead><tr><th>Profissional</th><th>Acesso</th><th>Admissão</th><th>Ações</th></tr></thead><tbody>{barberPages.pageItems.map(barber => <tr key={barber.id}><td><div className="table-person"><BarberAvatar barber={barber} size={40} /><div><strong>{barber.name}</strong><small>{barber.age ? `${barber.age} anos` : 'Profissional'}</small></div></div></td><td>{barber.email || '—'}</td><td>{barber.hireDate ? new Date(barber.hireDate).toLocaleDateString('pt-BR') : '—'}</td><td className="table-actions"><Button size="sm" variant="outline-dark" onClick={() => handleShow(barber)}>Editar</Button><Button size="sm" variant="outline-danger" onClick={() => handleDeleteBarber(barber)}>Remover</Button></td></tr>)}</tbody></Table>{!barbers.length && <p className="table-empty">Cadastre o primeiro profissional da equipe.</p>}<TablePager {...barberPages} /></div></section>
 
-          <section className="admin-section"><div className="section-heading"><div><span className="eyebrow">ATENDIMENTO</span><h2>Agenda</h2></div><span className="section-count">{appointments.length} registros</span></div><div className="table-wrap"><Table responsive hover className="data-table"><thead><tr><th>Data</th><th>Barbeiro</th><th>Serviço</th><th>Cliente</th><th>Status</th><th>Ação</th></tr></thead><tbody>{appointments.map(appointment => <tr key={appointment.id}><td><strong>{new Date(appointment.date).toLocaleDateString('pt-BR')}</strong><small>{new Date(appointment.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</small></td><td>{appointment.Barber?.name || '—'}</td><td>{appointment.specialty || 'Serviço'}</td><td>{appointment.Client?.name || '—'}</td><td><span className={`status-pill status-${appointment.status.toLowerCase().replaceAll(' ', '-')}`}>{appointment.status}</span></td><td>{appointment.status !== 'Cancelado' && appointment.status !== 'Concluído' && <Button size="sm" variant="outline-danger" onClick={() => handleCancel(appointment.id)}>Cancelar</Button>}</td></tr>)}</tbody></Table>{!appointments.length && <p className="table-empty">Os novos agendamentos aparecerão aqui.</p>}</div></section>
+          <section className="admin-section"><div className="section-heading"><div><span className="eyebrow">ATENDIMENTO</span><h2>Agenda</h2></div><span className="section-count">{appointments.length} registros</span></div><div className="table-wrap"><Table responsive hover className="data-table"><thead><tr><th>Data</th><th>Barbeiro</th><th>Serviço</th><th>Cliente</th><th>Status</th><th>Ação</th></tr></thead><tbody>{appointmentPages.pageItems.map(appointment => <tr key={appointment.id}><td><strong>{new Date(appointment.date).toLocaleDateString('pt-BR')}</strong><small>{new Date(appointment.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</small></td><td>{appointment.Barber?.name || '—'}</td><td>{appointment.specialty || 'Serviço'}</td><td>{appointment.Client?.name || '—'}</td><td><span className={`status-pill status-${appointment.status.toLowerCase().replaceAll(' ', '-')}`}>{appointment.status}</span></td><td>{appointment.status !== 'Cancelado' && appointment.status !== 'Concluído' && <Button size="sm" variant="outline-danger" onClick={() => handleCancel(appointment.id)}>Cancelar</Button>}</td></tr>)}</tbody></Table>{!appointments.length && <p className="table-empty">Os novos agendamentos aparecerão aqui.</p>}<TablePager {...appointmentPages} /></div></section>
 
-          <section className="admin-section"><div className="section-heading"><div><span className="eyebrow">COMUNIDADE</span><h2>Clientes</h2></div><span className="section-count">{clients.length} com agendamentos nesta barbearia</span></div><div className="table-wrap"><Table responsive hover className="data-table"><thead><tr><th>Nome</th><th>E-mail</th>{isAdmin && <th>Ação</th>}</tr></thead><tbody>{clients.map(client => <tr key={client.id}><td><strong>{client.name}</strong></td><td>{client.email}</td>{isAdmin && <td><Button size="sm" variant="outline-danger" onClick={() => handleDeleteClient(client)}>Excluir conta</Button></td>}</tr>)}</tbody></Table>{!clients.length && <p className="table-empty">Os clientes aparecerão aqui após o primeiro agendamento.</p>}</div></section>
+          <section className="admin-section"><div className="section-heading"><div><span className="eyebrow">COMUNIDADE</span><h2>Clientes</h2></div><span className="section-count">{clients.length} com agendamentos nesta barbearia</span></div><div className="table-wrap"><Table responsive hover className="data-table"><thead><tr><th>Nome</th><th>E-mail</th>{isAdmin && <th>Ação</th>}</tr></thead><tbody>{clientPages.pageItems.map(client => <tr key={client.id}><td><strong>{client.name}</strong></td><td>{client.email}</td>{isAdmin && <td><Button size="sm" variant="outline-danger" onClick={() => handleDeleteClient(client)}>Excluir conta</Button></td>}</tr>)}</tbody></Table>{!clients.length && <p className="table-empty">Os clientes aparecerão aqui após o primeiro agendamento.</p>}<TablePager {...clientPages} /></div></section>
         </>
       )}
     </main>

@@ -175,7 +175,13 @@ a { color: inherit; }
 .admin-section .section-heading h2 { font-size: 27px; }
 .admin-section .section-heading .btn { font-size: 12px; }
 .table-wrap { background: var(--white); border: 1px solid #d9dfd6; border-radius: 6px; box-shadow: 0 1px 2px rgb(23 35 31 / 4%), 0 8px 24px rgb(23 35 31 / 5%); overflow: hidden; }
-.table-wrap .table-responsive { margin: 0; }
+.table-wrap .table-responsive { margin: 0; max-height: 520px; overflow-y: auto; overscroll-behavior: contain; }
+/* Cabeçalho fixo enquanto o corpo da tabela rola. */
+.data-table thead th { position: sticky; top: 0; z-index: 1; }
+.finance-card .table-wrap .table-responsive { max-height: 360px; }
+.table-pager { align-items: center; border-top: 1px solid #e7ebe4; color: var(--muted); display: flex; flex-wrap: wrap; font-size: 12px; gap: 10px; justify-content: space-between; padding: 10px 16px; }
+.table-pager > div { align-items: center; display: flex; gap: 8px; }
+.table-pager-page { color: var(--ink); font-weight: 700; min-width: 44px; text-align: center; }
 .data-table { --bs-table-bg: var(--white); --bs-table-hover-bg: #eef5e8; --bs-table-hover-color: var(--ink); color: var(--ink); font-size: 13px; margin: 0; min-width: 660px; }
 .data-table thead th { background: #edf1ea; border-bottom: 1px solid #d3dbd0; color: #4b5852; font-size: 10px; font-weight: 700; letter-spacing: 0.8px; padding: 13px 16px; text-transform: uppercase; white-space: nowrap; }
 .data-table td { border-color: #e7ebe4; padding: 14px 16px; vertical-align: middle; }

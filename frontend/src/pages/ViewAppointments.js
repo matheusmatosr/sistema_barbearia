@@ -3,6 +3,7 @@ import { Alert, Button, Form, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { fetchAppointments, deleteAppointment, updateAppointment } from '../services/api';
 import { getCurrentUser } from '../services/authService';
+import TablePager, { usePagination } from '../components/TablePager';
 
 const MIN_CHANGE_HOURS = 2;
 const canChange = (appointment) => appointment.status === 'Agendado' && new Date(appointment.date) - Date.now() >= MIN_CHANGE_HOURS * 60 * 60 * 1000;
@@ -12,6 +13,7 @@ const ViewAppointments = () => {
   const [error, setError] = useState('');
   const user = getCurrentUser();
   const isBarber = user?.role === 'barber';
+  const pages = usePagination(appointments, 15);
 
   useEffect(() => {
     const loadAppointments = async () => {
@@ -73,7 +75,7 @@ const ViewAppointments = () => {
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appointment) => (
+            {pages.pageItems.map((appointment) => (
               <tr key={appointment.id}>
                 <td><strong>{new Date(appointment.date).toLocaleDateString('pt-BR')}</strong><small>{new Date(appointment.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</small></td>
                 {!isBarber && <td>{appointment.Barbershop ? <Link to={`/b/${appointment.Barbershop.slug}`} className="table-link">{appointment.Barbershop.name}</Link> : '—'}</td>}
@@ -90,6 +92,7 @@ const ViewAppointments = () => {
             ))}
           </tbody>
         </Table>
+        <TablePager {...pages} />
         {!appointments.length && !error && <div className="empty-state"><h2>Nenhum horário por aqui</h2><p>Quando houver um agendamento, ele aparecerá nesta lista.</p></div>}
       </div>
     </div>

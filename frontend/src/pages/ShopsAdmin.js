@@ -3,6 +3,7 @@ import { Alert, Button, Form, Modal, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { createManager, createShop, deleteManager, deleteShop, fetchManagedShops, updateShop } from '../services/api';
 import { shopLogo } from '../context/ShopContext';
+import TablePager, { usePagination } from '../components/TablePager';
 
 export const slugify = (text) => text
   .normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -22,6 +23,7 @@ const ShopsAdmin = () => {
   const [modalError, setModalError] = useState('');
   const [managersShop, setManagersShop] = useState(null);
   const [newManager, setNewManager] = useState(emptyManager);
+  const pages = usePagination(shops, 10);
 
   useEffect(() => {
     fetchManagedShops().then(setShops).catch(() => setError('Não foi possível carregar as barbearias.'));
@@ -109,7 +111,7 @@ const ShopsAdmin = () => {
         <Table responsive hover className="data-table">
           <thead><tr><th>Barbearia</th><th>Endereço</th><th className="num">Barbeiros</th><th>Gerentes</th><th>Status</th><th>Ações</th></tr></thead>
           <tbody>
-            {shops.map(shop => (
+            {pages.pageItems.map(shop => (
               <tr key={shop.id}>
                 <td><div className="table-person"><img src={shopLogo(shop)} alt="" className="table-logo" /><div><strong>{shop.name}</strong><small>{shop.tagline || '—'}</small></div></div></td>
                 <td><Link to={`/b/${shop.slug}`} className="table-link">/b/{shop.slug}</Link></td>
@@ -128,6 +130,7 @@ const ShopsAdmin = () => {
             ))}
           </tbody>
         </Table>
+        <TablePager {...pages} />
         {!shops.length && !error && <p className="table-empty">Nenhuma barbearia cadastrada.</p>}
       </div>
 
